@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温暖树洞 | 班级情绪支持平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #8ecae6;
+            --secondary: #219ebc;
+            --accent: #ffb4a2;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #90be6d;
+            --warning: #f9c74f;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2390caf9' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 1;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+        
+        .tree-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f4f8;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: var(--accent);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        textarea, input[type="password"], input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            resize: vertical;
+            background: white;
+        }
+        
+        textarea:focus, input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(142, 202, 230, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: #1a7a96;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(33, 158, 188, 0.3);
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background: #ff9b7d;
+            box-shadow: 0 6px 15px rgba(255, 180, 162, 0.3);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .privacy-note {
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .privacy-note i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+        
+        .submissions {
+            display: none;
+        }
+        
+        .submission-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        
+        .submission-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .submission-text {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        
+        .submission-meta {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .reply-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .reply-text {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 10px;
+            border-left: 3px solid var(--secondary);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e1e8ed;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #777;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: var(--secondary);
+            border-bottom: 3px solid var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #e1e8ed;
+            background: rgba(248, 249, 250, 0.7);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: var(--success);
+        }
+        
+        .notification.info {
+            background: var(--secondary);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+        }
+        
+        .user-info {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-id {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .welcome-message {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            text-align: center;
+            padding: 15px;
+            background: rgba(142, 202, 230, 0.1);
+            border-radius: 12px;
+        }
+        
+        .heart {
+            color: #ff6b6b;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .tab {
+                min-width: 120px;
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart-float {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.5);
+            font-size: 20px;
+            animation: float 15s linear infinite;
+            opacity: 0;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="hearts-container"></div>
+    
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <i class="fas fa-tree tree-icon"></i>
+                <h1>温暖班级情绪树洞</h1>
+                <p class="subtitle">一个安全、温暖的空间，分享你的心事与疑问，我们会用心倾听和回应</p>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="welcome-message">
+                <i class="fas fa-heart heart"></i> 欢迎来到我们的温暖树洞，你的每一份感受都值得被倾听
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="user-login">
+                    <i class="fas fa-user"></i> 用户登录
+                </div>
+                <div class="tab" data-tab="submit">
+                    <i class="fas fa-feather-alt"></i> 分享心事
+                </div>
+                <div class="tab" data-tab="view">
+                    <i class="fas fa-inbox"></i> 查看回复
+                </div>
+                <div class="tab" id="admin-tab" data-tab="admin">
+                    <i class="fas fa-user-shield"></i> 管理员
+                </div>
+            </div>
+            
+            <div class="tab-content active" id="user-login-tab">
+                <div class="section">
+                    <h2><i class="fas fa-sign-in-alt"></i> 用户登录/注册</h2>
+                    <p>使用你的邮箱登录或注册，这样你就可以方便地查看回复并收到通知</p>
+                    
+                    <div class="privacy-note">
+                        <i class="fas fa-lock"></i>
+                        <div>
+                            <strong>隐私保护承诺：</strong> 我们不会泄露任何个人信息，所有提交完全匿名。只有管理员可以看到内容并回复。
+                        </div>
+                    </div>
+                    
+                    <form id="user-login-form">
+                        <div class="form-group">
+                            <label for="user-email">你的邮箱：</label>
+                            <input type="email" id="user-email" placeholder="请输入你的邮箱地址">
+                        </div>
+                        <button type="submit" class="btn btn-block">
+                            <i class="fas fa-key"></i> 登录/注册
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="submit-tab">
+                <div class="user-info" id="user-info" style="display: none;">
+                    <div>欢迎，<span id="user-name"></span>！</div>
+                    <div>你的用户ID: <span class="user-id" id="user-id-display"></span></div>
+                </div>
+                
+                <div class="section">
+                    <h2><i class="fas fa-feather-alt"></i> 分享你的心事</h2>
+                    <p>在这里，你可以匿名分享任何心理困惑、情绪问题或生活烦恼。所有内容只有管理员可以看到并回复。</p>
+                    
+                    <form id="submission-form">
+                        <div class="form-group">
+                            <label for="message">你想分享的内容：</label>
+                            <textarea id="message" placeholder="请写下你的疑问、困惑或任何想说的话..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-block btn-accent">
+                            <i class="fas fa-paper-plane"></i> 匿名提交
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="view-tab">
+                <div class="user-info" id="user-info-view" style="display: none;">
+                    <div>欢迎，<span id="user-name-view"></span>！</div>
+                    <div>你的用户ID: <span class="user-id" id="user-id-display-view"></span></div>
+                </div>
+                
+                <div class="section">
+                    <h2><i class="fas fa-inbox"></i> 查看回复</h2>
+                    <p>查看管理员对你的提交的回复：</p>
+                    
+                    <div id="user-submissions-list">
+                        <!-- 用户提交的内容将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="admin-tab">
+                <div class="section">
+                    <h2><i class="fas fa-user-shield"></i> 管理员登录</h2>
+                    <div class="form-group">
+                        <label for="admin-password">管理员密码：</label>
+                        <input type="password" id="admin-password" placeholder="请输入管理员密码">
+                    </div>
+                    <button id="admin-login" class="btn">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </button>
+                </div>
+                
+                <div class="submissions" id="admin-panel">
+                    <h2><i class="fas fa-tasks"></i> 所有提交</h2>
+                    <div id="admin-notifications" style="margin-bottom: 20px;"></div>
+                    <div id="submissions-list">
+                        <!-- 提交内容将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>温暖班级情绪树洞 &copy; 2023 | 用心倾听，用爱回应</p>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // 创建浮动爱心
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const hearts = ['❤', '💙', '💚', '💛', '💜', '🧡'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // 添加图标
+            let icon = 'fas fa-info-circle';
+            if (type === 'success') icon = 'fas fa-check-circle';
+            if (type === 'warning') icon = 'fas fa-exclamation-triangle';
+            
+            notification.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        
+        // 使用localStorage模拟简单的数据存储
+        let submissions = JSON.parse(localStorage.getItem('emotionTreeHole')) || [];
+        let users = JSON.parse(localStorage.getItem('treeHoleUsers')) || [];
+        let adminLoggedIn = false;
+        let currentUser = null;
+        
+        // 生成随机ID
+        function generateId() {
+            return Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createHearts();
+            
+            // 检查是否有用户已登录
+            const savedUser = localStorage.getItem('currentTreeHoleUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showUserInfo();
+                switchToTab('submit');
+            }
+            
+            // 检查管理员通知
+            checkAdminNotifications();
+        });
+        
+        // 切换标签页
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                if (this.dataset.tab === 'submit' || this.dataset.tab === 'view') {
+                    if (!currentUser) {
+                        showNotification('请先登录你的账户', 'warning');
+                        switchToTab('user-login');
+                        return;
+                    }
+                }
+                
+                switchToTab(this.dataset.tab);
+            });
+        });
+        
+        function switchToTab(tabName) {
+            // 移除所有active类
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // 添加active类到当前标签
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // 如果是查看回复标签，加载用户提交
+            if (tabName === 'view' && currentUser) {
+                loadUserSubmissions();
+            }
+        }
+        
+        // 用户登录/注册
+        document.getElementById('user-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('user-email').value.trim();
+            
+            if (!email) {
+                showNotification('请输入邮箱地址', 'warning');
+                return;
+            }
+            
+            // 查找或创建用户
+            let user = users.find(u => u.email === email);
+            
+            if (!user) {
+                user = {
+                    id: generateId(),
+                    email: email,
+                    name: email.split('@')[0],
+                    joined: new Date().toLocaleString('zh-CN')
+                };
+                users.push(user);
+                localStorage.setItem('treeHoleUsers', JSON.stringify(users));
+                showNotification(`欢迎新朋友！你的用户ID是：${user.id}`, 'success');
+            } else {
+                showNotification(`欢迎回来，${user.name}！`, 'success');
+            }
+            
+            currentUser = user;
+            localStorage.setItem('currentTreeHoleUser', JSON.stringify(user));
+            
+            showUserInfo();
+            switchToTab('submit');
+        });
+        
+        // 显示用户信息
+        function showUserInfo() {
+            if (!currentUser) return;
+            
+            document.getElementById('user-info').style.display = 'flex';
+            document.getElementById('user-name').textContent = currentUser.name;
+            document.getElementById('user-id-display').textContent = currentUser.id;
+            
+            document.getElementById('user-info-view').style.display = 'flex';
+            document.getElementById('user-name-view').textContent = currentUser.name;
+            document.getElementById('user-id-display-view').textContent = currentUser.id;
+        }
+        
+        // 处理表单提交
+        document.getElementById('submission-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showNotification('请先登录你的账户', 'warning');
+                switchToTab('user-login');
+                return;
+            }
+            
+            const message = document.getElementById('message').value.trim();
+            
+            if (!message) {
+                showNotification('请输入你想分享的内容', 'warning');
+                return;
+            }
+            
+            const submission = {
+                id: generateId(),
+                userId: currentUser.id,
+                userName: currentUser.name,
+                userEmail: currentUser.email,
+                message: message,
+                timestamp: new Date().toLocaleString('zh-CN'),
+                reply: null,
+                replyTime: null,
+                isNew: true
+            };
+            
+            submissions.push(submission);
+            localStorage.setItem('emotionTreeHole', JSON.stringify(submissions));
+            
+            document.getElementById('message').value = '';
+            
+            // 显示温馨的提交成功消息
+            const comfortingMessages = [
+                "你的心声已被安全送达，我们会用心倾听并尽快回复 💖",
+                "感谢你的信任，你的感受对我们很重要 🌟",
+                "你的心事已被妥善保存，请耐心等待我们的温暖回应 🌈",
+                "勇敢分享是成长的第一步，我们为你感到骄傲 🌸",
+                "你的声音值得被听见，我们正在准备回应 🕊️"
+            ];
+            
+            const randomMessage = comfortingMessages[Math.floor(Math.random() * comfortingMessages.length)];
+            showNotification(randomMessage, 'success');
+            
+            // 添加管理员通知
+            addAdminNotification(`新提交：来自 ${currentUser.name}`);
+        });
+        
+        // 加载用户提交
+        function loadUserSubmissions() {
+            if (!currentUser) return;
+            
+            const userSubmissionsList = document.getElementById('user-submissions-list');
+            const userSubmissions = submissions.filter(s => s.userId === currentUser.id);
+            
+            if (userSubmissions.length === 0) {
+                userSubmissionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>你还没有提交过任何内容</p>
+                        <p>去"分享心事"标签页写下你的第一份分享吧</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            userSubmissions.forEach(submission => {
+                html += `
+                    <div class="submission-item">
+                        <div class="submission-meta">
+                            <span>提交时间：${submission.timestamp}</span>
+                            ${submission.reply ? '<span class="user-id">已回复</span>' : '<span style="color: var(--warning)">等待回复</span>'}
+                        </div>
+                        <div class="submission-text">${submission.message}</div>
+                        ${submission.reply ? `
+                            <div class="reply-section">
+                                <strong>管理员回复：</strong>
+                                <div class="reply-text">${submission.reply}</div>
+                                <div class="submission-meta">回复时间：${submission.replyTime}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            userSubmissionsList.innerHTML = html;
+        }
+        
+        // 管理员登录
+        document.getElementById('admin-login').addEventListener('click', function() {
+            const password = document.getElementById('admin-password').value;
+            
+            // 默认密码：admin123
+            if (password === 'HLY20070905') {
+                adminLoggedIn = true;
+                document.getElementById('admin-panel').style.display = 'block';
+                loadSubmissions();
+                showNotification('管理员登录成功！', 'success');
+            } else {
+                showNotification('密码错误！', 'warning');
+            }
+        });
+        
+        // 加载所有提交
+        function loadSubmissions() {
+            const submissionsList = document.getElementById('submissions-list');
+            
+            if (submissions.length === 0) {
+                submissionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>暂无任何提交</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            submissions.forEach((submission, index) => {
+                html += `
+                    <div class="submission-item">
+                        <div class="submission-meta">
+                            <span>用户: ${submission.userName}</span>
+                            <span>时间: ${submission.timestamp}</span>
+                            ${submission.isNew ? '<span style="color: var(--accent); font-weight: bold">新提交</span>' : ''}
+                        </div>
+                        <div class="submission-text">${submission.message}</div>
+                        <div class="reply-section">
+                            <div class="form-group">
+                                <label for="reply-${index}">管理员回复：</label>
+                                <textarea id="reply-${index}" placeholder="输入回复内容...">${submission.reply || ''}</textarea>
+                            </div>
+                            <button class="btn save-reply" data-index="${index}">
+                                <i class="fas fa-paper-plane"></i> ${submission.reply ? '更新回复' : '提交回复'}
+                            </button>
+                            ${submission.replyTime ? `<div class="submission-meta">上次回复时间：${submission.replyTime}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            submissionsList.innerHTML = html;
+            
+            // 添加回复保存事件
+            document.querySelectorAll('.save-reply').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.dataset.index;
+                    const replyText = document.getElementById(`reply-${index}`).value.trim();
+                    
+                    if (!replyText) {
+                        showNotification('回复内容不能为空', 'warning');
+                        return;
+                    }
+                    
+                    submissions[index].reply = replyText;
+                    submissions[index].replyTime = new Date().toLocaleString('zh-CN');
+                    submissions[index].isNew = false;
+                    localStorage.setItem('emotionTreeHole', JSON.stringify(submissions));
+                    
+                    showNotification('回复已保存！', 'success');
+                    
+                    // 添加用户通知
+                    addUserNotification(submissions[index].userId, `管理员回复了你的提交`);
+                    
+                    loadSubmissions();
+                });
+            });
+        }
+        
+        // 添加管理员通知
+        function addAdminNotification(message) {
+            let adminNotifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
+            adminNotifications.push({
+                message: message,
+                timestamp: new Date().toLocaleString('zh-CN'),
+                read: false
+            });
+            localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
+            checkAdminNotifications();
+        }
+        
+        // 检查管理员通知
+        function checkAdminNotifications() {
+            let adminNotifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
+            const unreadNotifications = adminNotifications.filter(n => !n.read);
+            
+            const notificationsContainer = document.getElementById('admin-notifications');
+            
+            if (unreadNotifications.length > 0) {
+                notificationsContainer.innerHTML = `
+                    <div class="privacy-note">
+                        <i class="fas fa-bell"></i>
+                        <div>
+                            <strong>你有 ${unreadNotifications.length} 条未读通知</strong>
+                            <br>最新: ${unreadNotifications[unreadNotifications.length - 1].message}
+                        </div>
+                    </div>
+                `;
+            } else {
+                notificationsContainer.innerHTML = '';
+            }
+        }
+        
+        // 添加用户通知
+        function addUserNotification(userId, message) {
+            let userNotifications = JSON.parse(localStorage.getItem('userNotifications')) || {};
+            
+            if (!userNotifications[userId]) {
+                userNotifications[userId] = [];
+            }
+            
+            userNotifications[userId].push({
+                message: message,
+                timestamp: new Date().toLocaleString('zh-CN'),
+                read: false
+            });
+            
+            localStorage.setItem('userNotifications', JSON.stringify(userNotifications));
+        }
+    </script>
+</body>
+</html>
